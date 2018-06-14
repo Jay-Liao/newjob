@@ -10,5 +10,5 @@ pip install -r requirements.txt
 
 ## Run Crawler
 ```sh
-python search.py
+python run_debug.py
 ```
