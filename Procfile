@@ -1,0 +1,1 @@
+web gunicorn newjob_app.app:app
