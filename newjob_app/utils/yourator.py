@@ -1,3 +1,7 @@
+from newjob_app.constants import job_constant
+from newjob_app.constants import config_constant
+
+
 def find_salary(url):
     import re
     import requests
@@ -28,14 +32,14 @@ def find_salary(url):
 
 def find_jobs_by_page(page, params):
     import requests
+    from newjob_app.app import app
 
-    search_job_url = "https://www.yourator.co/api/v2/jobs"
     params["page"] = page
     jobs = list()
     response = None
     try:
         response = requests.get(
-            url=search_job_url,
+            url=app.config[config_constant.YOURATOR_JOBS_URL],
             params=params,
             timeout=60
         )
@@ -51,10 +55,10 @@ def find_jobs_by_page(page, params):
 
 def find_jobs(params):
     import requests
+    from newjob_app.app import app
 
-    search_job_url = "https://www.yourator.co/api/v2/jobs"
     response = requests.get(
-        url=search_job_url,
+        url=app.config[config_constant.YOURATOR_JOBS_URL],
         params=params,
         timeout=60
     )
@@ -72,17 +76,23 @@ def find_jobs(params):
 def do_salary_task(job):
     import time
     import random
+    from newjob_app.app import app
 
-    url = job["url"]
+    url = f"{app.config[config_constant.YOURATOR_BASE_URL]}{job[job_constant.PATH]}"
+    print(url)
     salary = find_salary(url=url)
-    brand = job["company"]["brand"]
-    job_title = job["name"]
+    brand = job[job_constant.COMPANY][job_constant.BRAND]
+    job_title = job[job_constant.NAME]
     time.sleep(random.uniform(0.5, 1.3))
-    return {
-        "job_info": f"[{brand}] {job_title}",
-        "link": url,
-        "salary": salary
-    }
+    job[job_constant.JOB_INFO] = f"[{brand}] {job_title}"
+    job[job_constant.LINK] = url
+    job[job_constant.SALARY] = salary
+    return job
+    # return {
+    #     job_constant.JOB_INFO: f"[{brand}] {job_title}",
+    #     job_constant.LINK: url,
+    #     job_constant.SALARY: salary
+    # }
 
 
 def download_jobs():
@@ -97,7 +107,7 @@ def download_jobs():
     file_util.make_dirs(app.config[config_constant.JOB_DIRECTORY])
     filter_params = {
         "position[]": 1,  # full-time
-        "skillTag[]": [13]  # Python: 13
+        # "skillTag[]": [13]  # Python: 13
     }
 
     total_jobs = list()
@@ -113,16 +123,16 @@ def download_jobs():
             if len(jobs_in_the_page) > 0:
                 total_jobs.extend(jobs_in_the_page)
 
-    filtered_jobs = [job for job in total_jobs if job["has_salary_info"]]
-    for job in filtered_jobs:
-        url_prefix = "https://www.yourator.co"
-        path = job["path"]
-        url = f"{url_prefix}{path}"
-        job["url"] = url
+    filtered_jobs = [job for job in total_jobs if job[job_constant.HAS_SALARY]]
     added_salary_jobs = [do_salary_task(job) for job in filtered_jobs]
     filename = str(int(time.time()))
+    print(os.path.join(app.config[config_constant.JOB_DIRECTORY], filename))
     file_util.save_dict_as_json_file(
         file_path=os.path.join(app.config[config_constant.JOB_DIRECTORY], filename),
         dict_data=added_salary_jobs
     )
     return filename
+
+
+if __name__ == "__main__":
+    print(download_jobs())
