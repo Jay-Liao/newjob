@@ -1,4 +1,6 @@
-from newjob_app.constants import job_constant
+from newjob_app import setting
+from newjob_app.utils import job_util
+from newjob_app.utils import file_util
 
 
 class JobService(object):
@@ -9,8 +11,8 @@ class JobService(object):
         self.__skill_tag_map = self.__build_skill_tag_map()
 
     def __reload_jobs(self):
-        latest_file_name = JobService.__get_latest_file_name()
-        if self.__file_name != latest_file_name:
+        latest_job_file = job_util.get_latest_job_file()
+        if self.__file_name != latest_job_file:
             self.__init__()
 
     def get_file_name(self):
@@ -45,6 +47,8 @@ class JobService(object):
         return self.__skill_tags
 
     def __build_skill_tag_map(self):
+        from newjob_app.constants import job_constant
+
         skill_tag_map = dict()
         for job in self.__jobs:
             tags = job.get(job_constant.SKILL_TAGS, list())
@@ -56,12 +60,16 @@ class JobService(object):
         return skill_tag_map
 
     def __build_job_map(self):
+        from newjob_app.constants import job_constant
+
         job_map = dict()
         for job in self.__jobs:
             job_map[job[job_constant.ID]] = job
         return job_map
 
     def __get_skill_tags(self):
+        from newjob_app.constants import job_constant
+
         skill_tags = dict()
         for job in self.__jobs:
             tags = job.get(job_constant.SKILL_TAGS, list())
@@ -76,29 +84,14 @@ class JobService(object):
         return skill_tags
 
     @staticmethod
-    def __get_latest_file_name():
-        import os
-        from newjob_app.app import app
-        from newjob_app.constants import config_constant
-
-        file_names = os.listdir(app.config[config_constant.JOB_DIRECTORY])
-        file_names = [file_name for file_name in file_names if file_name.isdigit()]
-        file_name_numbers = [int(file_name) for file_name in file_names]
-        latest_file_name = str(max(file_name_numbers)) if len(file_name_numbers) > 0 else "default"
-        return latest_file_name
-
-    @staticmethod
     def __get_jobs_from_file():
         import os
-        from newjob_app.app import app
-        from newjob_app.utils import file_util
-        from newjob_app.constants import config_constant
 
-        latest_file_name = JobService.__get_latest_file_name()
+        latest_job_file = job_util.get_latest_job_file()
         jobs = file_util.read_dict_from_json_file(
-            os.path.join(app.config[config_constant.JOB_DIRECTORY], latest_file_name)
+            os.path.join(setting.JOB_DIRECTORY, latest_job_file)
         )
-        return latest_file_name, jobs
+        return latest_job_file, jobs
 
 
 job_service = JobService()

@@ -20,3 +20,11 @@ def make_dirs(path):
         os.makedirs(path)
     except:
         pass
+
+
+def remove_file(file_path):
+    if os.path.isfile(file_path):
+        try:
+            os.remove(file_path)
+        except:
+            pass

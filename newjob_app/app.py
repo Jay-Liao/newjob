@@ -2,7 +2,7 @@ from flask import Flask
 from flask import Blueprint
 from flask_restplus import Api
 from newjob_app.utils import file_util
-from newjob_app.constants import config_constant
+from newjob_app import setting
 
 
 def init_routing():
@@ -13,7 +13,7 @@ def init_routing():
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_object("config")
 app.config.from_pyfile("config.py", silent=True)
-file_util.make_dirs(app.config[config_constant.JOB_DIRECTORY])
+file_util.make_dirs(setting.JOB_DIRECTORY)
 
 # Setup routing
 bp = Blueprint("api", __name__)
