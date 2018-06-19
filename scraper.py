@@ -7,8 +7,7 @@ from newjob_app.utils import file_util
 
 MINUTE = 60
 HOUR = 60 * MINUTE
-# EIGHT_HOURS = 8 * HOUR
-EIGHT_HOURS = 30
+EIGHT_HOURS = 8 * HOUR
 
 if __name__ == "__main__":
     while True:
@@ -22,6 +21,6 @@ if __name__ == "__main__":
                 file_util.remove_file(file_path=file_path)
                 print(f"remove old job files: {file_path}")
         print("start download jobs")
-        time.sleep(EIGHT_HOURS)
         file_name = yourator.download_jobs()
         print(f"file_name: {file_name}")
+        time.sleep(EIGHT_HOURS)
