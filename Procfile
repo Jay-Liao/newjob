@@ -1,1 +1,1 @@
-web: gunicorn newjob_app.app:app
+web: python run.py
