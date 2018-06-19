@@ -8,14 +8,13 @@ from threading import Thread
 
 MINUTE = 60
 HOUR = 60 * MINUTE
-# EIGHT_HOURS = 8 * HOUR
-EIGHT_HOURS = 5
+EIGHT_HOURS = 8 * HOUR
 
 
 def run_web_script():
     # start the gunicorn server with custom configuration
     # You can also using app.run() if you want to use the flask built-in server -- be careful about the port
-    os.system('gunicorn -c gunicorn.conf newjob_app.app:app')
+    os.system("gunicorn -c gunicorn.conf newjob_app.app:app")
 
 
 def scraper():
