@@ -1,6 +1,7 @@
 from newjob_app import setting
 from newjob_app.utils import job_util
 from newjob_app.utils import file_util
+from newjob_app.constants import job_constant
 
 
 class JobService(object):
@@ -21,7 +22,7 @@ class JobService(object):
     def get_jobs(self, skill_tags, intersect):
         self.__reload_jobs()
         if skill_tags is None:
-            return self.__jobs
+            return JobService.__sort_jobs_by_salary(self.__jobs)
         skill_tags = [tag.lower() for tag in skill_tags if len(tag) > 0]
         job_filters = list()
         for skill_tag in skill_tags:
@@ -40,7 +41,7 @@ class JobService(object):
         jobs = list()
         for job_id in filter_job_ids:
             jobs.append(self.__job_map[job_id])
-        return jobs
+        return JobService.__sort_jobs_by_salary(jobs)
 
     def get_skill_tags(self):
         self.__reload_jobs()
@@ -82,6 +83,24 @@ class JobService(object):
         for k, v in skill_tags.items():
             skill_tags[k] = list(skill_tags[k])
         return skill_tags
+
+    @staticmethod
+    def __sort_jobs_by_salary(jobs):
+        import re
+
+        salary_jobs = list()
+        salary_reg = re.compile("\d+(?:,\d{3})*")
+        for job in jobs:
+            salary = job[job_constant.SALARY]
+            reg_results = salary_reg.findall(salary)
+            if len(reg_results) == 0:
+                continue
+            raw_base_salary = reg_results[0]
+            base_salary = int(raw_base_salary.replace(",", ""))
+            job[job_constant.BASE_SALARY] = base_salary
+            salary_jobs.append(job)
+        salary_jobs = sorted(salary_jobs, key=lambda job: job[job_constant.BASE_SALARY])
+        return salary_jobs
 
     @staticmethod
     def __get_jobs_from_file():
