@@ -97,9 +97,8 @@ def download_jobs():
     # make sure directory exists
     file_util.make_dirs(setting.JOB_DIRECTORY)
     filter_params = {
-        # "position[]": 1,  # full-time
-        "position[]": 2,  # full-time
-        "skillTag[]": [13]  # Python: 13
+        "position[]": 1,  # full-time
+        # "skillTag[]": [13]  # Python: 13
     }
 
     total_jobs = list()
