@@ -1,20 +1,27 @@
 import unittest
+from newjob_app.constants import job_constant
 from newjob_app.utils import salary_util
 
 
 class TestSalaryUtil(unittest.TestCase):
 
-    def test_parse_base_salary_with_salary_interval(self):
+    def test_parse_salary_interval_with_salary_interval(self):
         test_data = "NT$ 60,000 - 80,000 (月薪)"
-        self.assertEqual(60000, salary_util.parse_base_salary(test_data))
+        min_salary, max_salary = salary_util.parse_salary_interval(test_data)
+        self.assertEqual(60000, min_salary)
+        self.assertEqual(80000, max_salary)
 
-    def test_parse_base_salary_with_only_base_salary(self):
+    def test_parse_salary_interval_with_only_base_salary(self):
         test_data = "NT$ 60,000 - (月薪)"
-        self.assertEqual(60000, salary_util.parse_base_salary(test_data))
+        min_salary, max_salary = salary_util.parse_salary_interval(test_data)
+        self.assertEqual(60000, min_salary)
+        self.assertEqual(job_constant.DEFAULT_MAX_SALARY, max_salary)
 
-    def test_parse_base_salary_with_no_comma(self):
+    def test_parse_salary_interval_with_no_comma(self):
         test_data = "NT$ 60000 - (月薪)"
-        self.assertEqual(60000, salary_util.parse_base_salary(test_data))
+        min_salary, max_salary = salary_util.parse_salary_interval(test_data)
+        self.assertEqual(60000, min_salary)
+        self.assertEqual(job_constant.DEFAULT_MAX_SALARY, max_salary)
 
     def test_parse_salary_type_with_monthly_type(self):
         test_data = "NT$ 60,000 - 80,000 (月薪)"

@@ -121,13 +121,13 @@ def download_jobs():
         salary = job[job_constant.SALARY]
         try:
             salary_type = salary_util.parse_salary_type(salary)
-            base_salary = salary_util.parse_base_salary(salary)
-            job[job_constant.BASE_SALARY] = base_salary
+            min_salary, max_salary = salary_util.parse_salary_interval(salary)
+            job[job_constant.MIN_SALARY] = min_salary
+            job[job_constant.MAX_SALARY] = max_salary
             job[job_constant.SALARY_TYPE] = salary_type
             added_base_salary_jobs.append(job)
         except:
-            url = f"{setting.YOURATOR_BASE_URL}{job[job_constant.PATH]}"
-            print(f"Parse salary info fail: {url}")
+            print(f"Parse salary info fail: {setting.YOURATOR_BASE_URL}{job[job_constant.PATH]}")
     filename = str(int(time.time()))
     print(os.path.join(setting.JOB_DIRECTORY, filename))
     file_util.save_dict_as_json_file(
