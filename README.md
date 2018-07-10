@@ -8,7 +8,22 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Run Crawler
+## Run debug mode
 ```sh
 python debug.py
+```
+
+## Run production mode
+```sh
+python run.py
+```
+
+## Run job spider
+```sh
+python job_spider.py
+```
+
+## Run Tests
+```sh
+nose2 -v
 ```

@@ -17,7 +17,7 @@ def run_web_script():
     os.system("gunicorn -c gunicorn.conf newjob_app.app:app")
 
 
-def scraper():
+def spider():
     while True:
         job_files = job_util.get_job_files()
         # remove out of date job files
@@ -35,7 +35,7 @@ def scraper():
 
 
 def start_scheduler():
-    t = Thread(target=scraper)
+    t = Thread(target=spider)
     t.start()
 
 
@@ -44,5 +44,5 @@ def run():
     run_web_script()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run()

@@ -92,7 +92,7 @@ def download_jobs():
     import math
     import time
     from newjob_app.utils import file_util
-    from newjob_app import setting
+    from newjob_app.utils import salary_util
 
     # make sure directory exists
     file_util.make_dirs(setting.JOB_DIRECTORY)
@@ -116,6 +116,18 @@ def download_jobs():
 
     filtered_jobs = [job for job in total_jobs if job[job_constant.HAS_SALARY]]
     added_salary_jobs = [do_salary_task(job) for job in filtered_jobs]
+    added_base_salary_jobs = list()
+    for job in added_salary_jobs:
+        salary = job[job_constant.SALARY]
+        try:
+            salary_type = salary_util.parse_salary_type(salary)
+            base_salary = salary_util.parse_base_salary(salary)
+            job[job_constant.BASE_SALARY] = base_salary
+            job[job_constant.SALARY_TYPE] = salary_type
+            added_base_salary_jobs.append(job)
+        except:
+            url = f"{setting.YOURATOR_BASE_URL}{job[job_constant.PATH]}"
+            print(f"Parse salary info fail: {url}")
     filename = str(int(time.time()))
     print(os.path.join(setting.JOB_DIRECTORY, filename))
     file_util.save_dict_as_json_file(

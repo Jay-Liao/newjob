@@ -19,10 +19,30 @@ class JobService(object):
     def get_file_name(self):
         return self.__file_name
 
-    def get_jobs(self, skill_tags, intersect):
+    def get_jobs(self, skill_tags, intersect, base_monthly_salary, base_annual_salary):
         self.__reload_jobs()
+        jobs = self.__filter_jobs_by_skill_tags(skill_tags=skill_tags, intersect=intersect)
+        monthly_job_filter = filter(lambda job: JobService.__monthly_job_filter(job, base_monthly_salary), jobs)
+        annual_job_filter = filter(lambda job: JobService.__annual_job_filter(job, base_annual_salary), jobs)
+        monthly_jobs = list(monthly_job_filter)
+        monthly_jobs = sorted(monthly_jobs, key=lambda job: job[job_constant.BASE_SALARY], reverse=True)
+        annual_jobs = list(annual_job_filter)
+        annual_jobs = sorted(annual_jobs, key=lambda job: job[job_constant.BASE_SALARY], reverse=True)
+        annual_jobs.extend(monthly_jobs)
+        return annual_jobs
+
+    @staticmethod
+    def __monthly_job_filter(job, base_salary):
+        return job[job_constant.SALARY_TYPE] == "月薪" and job[job_constant.BASE_SALARY] >= base_salary
+
+    @staticmethod
+    def __annual_job_filter(job, base_salary):
+        return job[job_constant.SALARY_TYPE] == "年薪" and job[job_constant.BASE_SALARY] >= base_salary
+
+    def __filter_jobs_by_skill_tags(self, skill_tags, intersect):
         if skill_tags is None:
-            return JobService.__sort_jobs_by_salary(self.__jobs)
+            return self.__jobs
+
         skill_tags = [tag.lower() for tag in skill_tags if len(tag) > 0]
         job_filters = list()
         for skill_tag in skill_tags:
@@ -41,7 +61,7 @@ class JobService(object):
         jobs = list()
         for job_id in filter_job_ids:
             jobs.append(self.__job_map[job_id])
-        return JobService.__sort_jobs_by_salary(jobs)
+        return jobs
 
     def get_skill_tags(self):
         self.__reload_jobs()
@@ -99,7 +119,7 @@ class JobService(object):
             base_salary = int(raw_base_salary.replace(",", ""))
             job[job_constant.BASE_SALARY] = base_salary
             salary_jobs.append(job)
-        salary_jobs = sorted(salary_jobs, key=lambda job: job[job_constant.BASE_SALARY])
+        salary_jobs = sorted(salary_jobs, key=lambda job: job[job_constant.BASE_SALARY], reverse=True)
         return salary_jobs
 
     @staticmethod
