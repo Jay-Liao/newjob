@@ -24,8 +24,8 @@ jobs_info = api.model("jobs_info", {
 parser = reqparse.RequestParser()
 parser.add_argument("skill_tags", type=str, action="append")
 parser.add_argument("intersect", type=int, default=0, choices=[0, 1])
-parser.add_argument("target_monthly_salary", type=int, default=None)
-parser.add_argument("target_annual_salary", type=int, default=None)
+parser.add_argument("expected_monthly_salary", type=int, default=None)
+parser.add_argument("expected_annual_salary", type=int, default=None)
 
 
 @ns.route("/")
@@ -37,13 +37,13 @@ class TodoList(Resource):
         args = parser.parse_args()
         skill_tags = args["skill_tags"]
         intersect = args["intersect"]
-        target_monthly_salary = args["target_monthly_salary"]
-        target_annual_salary = args["target_annual_salary"]
+        expected_monthly_salary = args["expected_monthly_salary"]
+        expected_annual_salary = args["expected_annual_salary"]
         jobs = job_service.get_jobs(
             skill_tags=skill_tags,
             intersect=intersect,
-            target_monthly_salary=target_monthly_salary,
-            target_annual_salary=target_annual_salary
+            expected_monthly_salary=expected_monthly_salary,
+            expected_annual_salary=expected_annual_salary
         )
         result = {
             "jobs": jobs,

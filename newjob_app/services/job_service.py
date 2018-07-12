@@ -19,11 +19,11 @@ class JobService(object):
     def get_file_name(self):
         return self.__file_name
 
-    def get_jobs(self, skill_tags, intersect, target_monthly_salary, target_annual_salary):
+    def get_jobs(self, skill_tags, intersect, expected_monthly_salary, expected_annual_salary):
         self.__reload_jobs()
         jobs = self.__filter_jobs_by_skill_tags(skill_tags=skill_tags, intersect=intersect)
-        monthly_job_filter = filter(lambda job: JobService.__monthly_job_filter(job, target_monthly_salary), jobs)
-        annual_job_filter = filter(lambda job: JobService.__annual_job_filter(job, target_annual_salary), jobs)
+        monthly_job_filter = filter(lambda job: JobService.__monthly_job_filter(job, expected_monthly_salary), jobs)
+        annual_job_filter = filter(lambda job: JobService.__annual_job_filter(job, expected_annual_salary), jobs)
         monthly_jobs = list(monthly_job_filter)
         monthly_jobs = sorted(monthly_jobs, key=lambda job: job[job_constant.MAX_SALARY], reverse=True)
         annual_jobs = list(annual_job_filter)
@@ -32,20 +32,20 @@ class JobService(object):
         return annual_jobs
 
     @staticmethod
-    def __monthly_job_filter(job, target_salary):
-        if target_salary is None:
+    def __monthly_job_filter(job, expected_salary):
+        if expected_salary is None:
             return job[job_constant.SALARY_TYPE] == "月薪"
         else:
             return job[job_constant.SALARY_TYPE] == "月薪" and \
-                   job[job_constant.MIN_SALARY] <= target_salary <= job[job_constant.MAX_SALARY]
+                   job[job_constant.MIN_SALARY] <= expected_salary <= job[job_constant.MAX_SALARY]
 
     @staticmethod
-    def __annual_job_filter(job, target_salary):
-        if target_salary is None:
+    def __annual_job_filter(job, expected_salary):
+        if expected_salary is None:
             return job[job_constant.SALARY_TYPE] == "年薪"
         else:
             return job[job_constant.SALARY_TYPE] == "年薪" and \
-                   job[job_constant.MIN_SALARY] <= target_salary <= job[job_constant.MAX_SALARY]
+                   job[job_constant.MIN_SALARY] <= expected_salary <= job[job_constant.MAX_SALARY]
 
     def __filter_jobs_by_skill_tags(self, skill_tags, intersect):
         if skill_tags is None:
