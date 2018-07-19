@@ -1,0 +1,14 @@
+version: '2'
+services:
+  newjob:
+    build: .
+    image: newjob_img
+    container_name: newjob
+    privileged: true
+    ports:
+     - "8000:8000"
+    volumes:
+      - ${PWD}/..:/opt/newjob
+      - /opt/newjob/log:/opt/newjob/log
+    restart: always
+    command: "python run.py"
