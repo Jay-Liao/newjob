@@ -1,6 +1,5 @@
 from flask import Flask
 from flask import Blueprint
-from flask import render_template
 from flask_restplus import Api
 from newjob_app.utils import file_util
 from newjob_app import setting
@@ -21,8 +20,3 @@ bp = Blueprint("api", __name__)
 api = Api(bp, version="1.0", title="NewJob", description="A simple NewJob API")
 init_routing()
 app.register_blueprint(bp, url_prefix="/newjob")
-
-
-@app.route("/apidoc")
-def apidoc():
-    return render_template("swagger_ui.html")
