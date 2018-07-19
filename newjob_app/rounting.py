@@ -28,7 +28,7 @@ parser.add_argument("expected_monthly_salary", type=int, default=None)
 parser.add_argument("expected_annual_salary", type=int, default=None)
 
 
-@ns.route("/")
+@ns.route("")
 class TodoList(Resource):
     @ns.marshal_with(jobs_info)
     @ns.expect(parser)
