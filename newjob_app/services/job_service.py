@@ -37,7 +37,8 @@ class JobService(object):
             return job[job_constant.SALARY_TYPE] == "月薪"
         else:
             return job[job_constant.SALARY_TYPE] == "月薪" and \
-                   job[job_constant.MIN_SALARY] <= expected_salary <= job[job_constant.MAX_SALARY]
+                   (job[job_constant.MIN_SALARY] <= expected_salary <= job[job_constant.MAX_SALARY] or
+                    job[job_constant.MIN_SALARY] > expected_salary)
 
     @staticmethod
     def __annual_job_filter(job, expected_salary):
@@ -45,7 +46,8 @@ class JobService(object):
             return job[job_constant.SALARY_TYPE] == "年薪"
         else:
             return job[job_constant.SALARY_TYPE] == "年薪" and \
-                   job[job_constant.MIN_SALARY] <= expected_salary <= job[job_constant.MAX_SALARY]
+                   (job[job_constant.MIN_SALARY] <= expected_salary <= job[job_constant.MAX_SALARY] or
+                    job[job_constant.MIN_SALARY] > expected_salary)
 
     def __filter_jobs_by_skill_tags(self, skill_tags, intersect):
         if skill_tags is None:
