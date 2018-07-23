@@ -116,7 +116,7 @@ def download_jobs():
 
     filtered_jobs = [job for job in total_jobs if job[job_constant.HAS_SALARY]]
     added_salary_jobs = [do_salary_task(job) for job in filtered_jobs]
-    added_base_salary_jobs = list()
+    added_min_and_max_salary_jobs = list()
     for job in added_salary_jobs:
         salary = job[job_constant.SALARY]
         try:
@@ -125,14 +125,14 @@ def download_jobs():
             job[job_constant.MIN_SALARY] = min_salary
             job[job_constant.MAX_SALARY] = max_salary
             job[job_constant.SALARY_TYPE] = salary_type
-            added_base_salary_jobs.append(job)
+            added_min_and_max_salary_jobs.append(job)
         except:
             print(f"Parse salary info fail: {setting.YOURATOR_BASE_URL}{job[job_constant.PATH]}")
     filename = str(int(time.time()))
     print(os.path.join(setting.JOB_DIRECTORY, filename))
     file_util.save_dict_as_json_file(
         file_path=os.path.join(setting.JOB_DIRECTORY, filename),
-        dict_data=added_salary_jobs
+        dict_data=added_min_and_max_salary_jobs
     )
     return filename
 
