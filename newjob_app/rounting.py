@@ -18,6 +18,7 @@ job = api.model("job", {
 jobs_info = api.model("jobs_info", {
     "jobs": fields.List(fields.Nested(job), required=True),
     "jobs_count": fields.Integer(required=True),
+    "updated_time": fields.String(required=True),
     "source": fields.String(required=True)
 })
 
@@ -48,6 +49,7 @@ class TodoList(Resource):
         result = {
             "jobs": jobs,
             "source": job_service.get_file_name(),
+            "updated_time": job_service.get_updated_time(),
             "jobs_count": len(jobs)
         }
         return result, http.HTTPStatus.OK

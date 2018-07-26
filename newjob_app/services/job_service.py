@@ -19,6 +19,16 @@ class JobService(object):
     def get_file_name(self):
         return self.__file_name
 
+    def get_updated_time(self):
+        import datetime
+
+        try:
+            timestamp = int(self.get_file_name())
+            datetime_obj = datetime.datetime.fromtimestamp(timestamp)
+            return datetime_obj.strftime("%Y-%m-%d %H:%M:%S")
+        except:
+            return "default"
+
     def get_jobs(self, skill_tags, intersect, expected_monthly_salary, expected_annual_salary):
         self.__reload_jobs()
         jobs = self.__filter_jobs_by_skill_tags(skill_tags=skill_tags, intersect=intersect)
